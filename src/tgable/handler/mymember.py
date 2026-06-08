@@ -8,7 +8,6 @@ from typing import Protocol
 
 from tgable.payload import MyMemberPayloadType
 from tgable.payload import MyMemberPayload
-from tgable.context import Service
 from tgable.context import Context
 
 from . import Filters
@@ -17,21 +16,21 @@ from . import Handlers
 
 
 # pylint: disable=too-few-public-methods
-class MyMemberHandler[ServiceT: Service](Protocol):
+class MyMemberHandler[ServiceT](Protocol):
     async def __call__(
             self, context: Context[MyMemberPayload, ServiceT], caption: str | None, /) -> None:
         ...
 
 
 @dataclass(frozen=True)
-class MyMemberWrapper[ServiceT: Service](Wrapper[MyMemberPayload, ServiceT]):
+class MyMemberWrapper[ServiceT](Wrapper[MyMemberPayload, ServiceT]):
     handler: MyMemberHandler[ServiceT]
 
     async def __call__(self, context: Context[MyMemberPayload, ServiceT]) -> None:
         await self.handler(context, context.request.payload.caption)
 
 
-class MyMemberHandlers[ServiceT: Service](
+class MyMemberHandlers[ServiceT](
         Handlers[MyMemberPayloadType, MyMemberPayload, ServiceT]):
     def __call__(
         self,

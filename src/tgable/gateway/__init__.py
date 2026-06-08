@@ -6,7 +6,6 @@ from aiogram.types import BotCommand
 from aiogram import Dispatcher
 from aiogram import Bot
 
-from tgable.context import Service
 from tgable.factory import Factory
 from tgable.dispatch import Dispatch
 
@@ -16,7 +15,7 @@ from .routing import setup_routing
 
 
 # pylint: disable=too-few-public-methods
-class Gateway[ServiceT: Service]:
+class Gateway[ServiceT]:
 
     def __init__(
         self,

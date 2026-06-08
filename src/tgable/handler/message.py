@@ -7,7 +7,6 @@ from typing import override
 from typing import Protocol
 
 from tgable.payload import MessagePayload
-from tgable.context import Service
 from tgable.context import Context
 
 from . import Filters
@@ -16,13 +15,13 @@ from . import Handlers
 
 
 # pylint: disable=too-few-public-methods
-class MessageHandler[ServiceT: Service](Protocol):
+class MessageHandler[ServiceT](Protocol):
     async def __call__(self, context: Context[MessagePayload, ServiceT], content: str, /) -> None:
         ...
 
 
 @dataclass(frozen=True)
-class MessageWrapper[ServiceT: Service](Wrapper[MessagePayload, ServiceT]):
+class MessageWrapper[ServiceT](Wrapper[MessagePayload, ServiceT]):
     handler: MessageHandler[ServiceT]
 
     @override
@@ -30,7 +29,7 @@ class MessageWrapper[ServiceT: Service](Wrapper[MessagePayload, ServiceT]):
         await self.handler(context, context.request.payload.content)
 
 
-class MessageHandlers[ServiceT: Service](Handlers[None, MessagePayload, ServiceT]):
+class MessageHandlers[ServiceT](Handlers[None, MessagePayload, ServiceT]):
     def __call__(
         self,
         /,

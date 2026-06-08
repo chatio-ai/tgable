@@ -7,7 +7,6 @@ from typing import override
 from typing import Protocol
 
 from tgable.payload import PaymentPayload
-from tgable.context import Service
 from tgable.context import Context
 
 from . import Filters
@@ -16,13 +15,13 @@ from . import Handlers
 
 
 # pylint: disable=too-few-public-methods
-class PaymentHandler[ServiceT: Service](Protocol):
+class PaymentHandler[ServiceT](Protocol):
     async def __call__(self, context: Context[PaymentPayload, ServiceT], /) -> None:
         ...
 
 
 @dataclass(frozen=True)
-class PaymentWrapper[ServiceT: Service](Wrapper[PaymentPayload, ServiceT]):
+class PaymentWrapper[ServiceT](Wrapper[PaymentPayload, ServiceT]):
     handler: PaymentHandler[ServiceT]
 
     @override
@@ -30,7 +29,7 @@ class PaymentWrapper[ServiceT: Service](Wrapper[PaymentPayload, ServiceT]):
         await self.handler(context)
 
 
-class PaymentHandlers[ServiceT: Service](Handlers[None, PaymentPayload, ServiceT]):
+class PaymentHandlers[ServiceT](Handlers[None, PaymentPayload, ServiceT]):
     def __call__(
         self,
         /,

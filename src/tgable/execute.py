@@ -17,7 +17,6 @@ from tgable.channel.callback import CallbackChannel
 from tgable.payload import MessagePayload
 from tgable.payload import CommandPayload
 from tgable.context import Context
-from tgable.context import Service
 from tgable.factory import Factory
 from tgable.dispatch import Dispatch
 
@@ -27,7 +26,7 @@ from tgable.content import reports
 log = logging.getLogger(__name__)
 
 
-async def handle_event[ServiceT: Service](
+async def handle_event[ServiceT](
     parsing: Parsing[TelegramObject],
     factory: Factory[ServiceT],
     dispatch: Dispatch[ServiceT],

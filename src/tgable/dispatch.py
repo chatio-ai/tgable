@@ -16,7 +16,6 @@ from tgable.payload import MyMemberPayload
 from tgable.payload import CheckoutPayload
 from tgable.payload import PaymentPayload
 
-from tgable.context import Service
 from tgable.context import Context
 
 from tgable.handler import Filters
@@ -33,7 +32,7 @@ from tgable.handler.payment import PaymentHandlers
 
 # pylint: disable=too-many-instance-attributes
 @dataclass(frozen=True)
-class Feature[ServiceT: Service]:
+class Feature[ServiceT]:
     message: MessageHandlers[ServiceT] = field(default_factory=MessageHandlers)
     document: DocumentHandlers[ServiceT] = field(default_factory=DocumentHandlers)
     command: CommandHandlers[ServiceT] = field(default_factory=CommandHandlers)
@@ -45,7 +44,7 @@ class Feature[ServiceT: Service]:
 
 
 @dataclass(frozen=True)
-class Dispatch[ServiceT: Service](Feature[ServiceT]):
+class Dispatch[ServiceT](Feature[ServiceT]):
     def __init__(
         self,
         *features: Feature[ServiceT],

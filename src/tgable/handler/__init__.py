@@ -8,14 +8,13 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from tgable.payload import Payload
-from tgable.context import Service
 from tgable.context import Context
 
 
-type Handler[PayloadT: Payload, ServiceT: Service] = \
+type Handler[PayloadT: Payload, ServiceT] = \
         Callable[[Context[PayloadT, ServiceT]], Awaitable[None]]
 
-type Filters[PayloadT: Payload, ServiceT: Service] = \
+type Filters[PayloadT: Payload, ServiceT] = \
         Iterable[Callable[[Context[PayloadT, ServiceT]], bool]]
 
 
@@ -24,7 +23,7 @@ type Filters[PayloadT: Payload, ServiceT: Service] = \
 
 
 @dataclass(frozen=True)
-class Wrapper[PayloadT: Payload, ServiceT: Service](ABC):
+class Wrapper[PayloadT: Payload, ServiceT](ABC):
     filters: Filters[PayloadT, ServiceT]
 
     @abstractmethod
@@ -32,7 +31,7 @@ class Wrapper[PayloadT: Payload, ServiceT: Service](ABC):
         ...
 
 
-class Handlers[KeyT, PayloadT: Payload, ServiceT: Service](ABC):
+class Handlers[KeyT, PayloadT: Payload, ServiceT](ABC):
     def __init__(
         self,
         handlers: dict[KeyT, Wrapper[PayloadT, ServiceT]] | None = None,

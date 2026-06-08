@@ -20,14 +20,13 @@ from tgable.request.message import MessageParsing
 from tgable.request.callback import CallbackParsing
 from tgable.request.checkout import CheckoutParsing
 
-from tgable.context import Service
 from tgable.factory import Factory
 from tgable.dispatch import Dispatch
 
 from tgable.execute import handle_event
 
 
-def _wrap_handle_event[TelegramObjectT: TelegramObject, ServiceT: Service](
+def _wrap_handle_event[TelegramObjectT: TelegramObject, ServiceT](
     objtype: type[TelegramObjectT],
     parsing: Callable[[TelegramObjectT], Parsing[TelegramObjectT]],
     factory: Factory[ServiceT],
@@ -47,7 +46,7 @@ def _wrap_handle_event[TelegramObjectT: TelegramObject, ServiceT: Service](
     return _wrapper
 
 
-def setup_routing[ServiceT: Service](
+def setup_routing[ServiceT](
     dp: Dispatcher,
     factory: Factory[ServiceT],
     dispatch: Dispatch[ServiceT],

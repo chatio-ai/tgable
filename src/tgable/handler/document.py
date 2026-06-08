@@ -7,7 +7,6 @@ from typing import override
 from typing import Protocol
 
 from tgable.payload import DocumentPayload
-from tgable.context import Service
 from tgable.context import Context
 
 from . import Filters
@@ -16,14 +15,14 @@ from . import Handlers
 
 
 # pylint: disable=too-few-public-methods
-class DocumentHandler[ServiceT: Service](Protocol):
+class DocumentHandler[ServiceT](Protocol):
     async def __call__(
             self, context: Context[DocumentPayload, ServiceT], content: str | None, /) -> None:
         ...
 
 
 @dataclass(frozen=True)
-class DocumentWrapper[ServiceT: Service](Wrapper[DocumentPayload, ServiceT]):
+class DocumentWrapper[ServiceT](Wrapper[DocumentPayload, ServiceT]):
     handler: DocumentHandler[ServiceT]
 
     @override
@@ -31,7 +30,7 @@ class DocumentWrapper[ServiceT: Service](Wrapper[DocumentPayload, ServiceT]):
         await self.handler(context, context.request.payload.content)
 
 
-class DocumentHandlers[ServiceT: Service](Handlers[None, DocumentPayload, ServiceT]):
+class DocumentHandlers[ServiceT](Handlers[None, DocumentPayload, ServiceT]):
     def __call__(
         self,
         /,

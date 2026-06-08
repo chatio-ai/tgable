@@ -5,10 +5,9 @@ from tgable.metadata import Binding
 
 from tgable.locking import Locking
 from tgable.limiter import Limiter
-from tgable.context import Service
 
 
-class Factory[ServiceT: Service]:
+class Factory[ServiceT]:
 
     def __init__(
         self,

@@ -10,7 +10,6 @@ from typing import Any
 from aiogram.types import InlineKeyboardMarkup
 
 from tgable.payload import KeyboardPayload
-from tgable.context import Service
 from tgable.context import Context
 
 from . import Filters
@@ -19,7 +18,7 @@ from . import Handlers
 
 
 # pylint: disable=too-few-public-methods
-class KeyboardHandler[ServiceT: Service](Protocol):
+class KeyboardHandler[ServiceT](Protocol):
     def __call__(
             self, context: Context[KeyboardPayload, ServiceT], /,
             *args: Any, **kwargs: Any) -> InlineKeyboardMarkup:
@@ -27,7 +26,7 @@ class KeyboardHandler[ServiceT: Service](Protocol):
 
 
 @dataclass(frozen=True)
-class KeyboardWrapper[ServiceT: Service](Wrapper[KeyboardPayload, ServiceT]):
+class KeyboardWrapper[ServiceT](Wrapper[KeyboardPayload, ServiceT]):
     handler: KeyboardHandler[ServiceT]
 
     async def __call__(self, context: Context[KeyboardPayload, ServiceT]) -> None:
@@ -35,7 +34,7 @@ class KeyboardWrapper[ServiceT: Service](Wrapper[KeyboardPayload, ServiceT]):
                 buttons=self.handler(context, *context.request.payload.options))
 
 
-class KeyboardHandlers[ServiceT: Service](Handlers[str, KeyboardPayload, ServiceT]):
+class KeyboardHandlers[ServiceT](Handlers[str, KeyboardPayload, ServiceT]):
     def __call__(
         self,
         keyboard: str,
