@@ -1,6 +1,8 @@
 
 from aiogram.exceptions import TelegramNetworkError
 
+from aiogram.types import MenuButtonWebApp
+from aiogram.types import WebAppInfo
 from aiogram.types import BotCommand
 
 from aiogram import Dispatcher
@@ -22,9 +24,11 @@ class Gateway[ServiceT]:
         bot_key: str,
         factory: Factory[ServiceT],
         dispatch: Dispatch[ServiceT],
+        web_app: str | None = None,
         commands: dict[str, str] | None = None,
     ) -> None:
 
+        self._web_app = web_app
         self._commands = []
         if commands is not None:
             for name, desc in commands.items():
@@ -40,6 +44,11 @@ class Gateway[ServiceT]:
         async with self._bot:
             try:
                 log.info("INIT bot %s", self._bot.id)
+                if self._web_app is not None:
+                    await self._bot.set_chat_menu_button(menu_button=MenuButtonWebApp(
+                        text="...",
+                        web_app=WebAppInfo(url=self._web_app),
+                    ))
                 await self._bot.set_my_commands(self._commands)
                 log.info("POLL bot %s", self._bot.id)
                 await self._dp.start_polling(self._bot)

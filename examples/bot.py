@@ -28,6 +28,7 @@ feature.message()(text_message)
 if __name__ == '__main__':
     asyncio.run(Gateway(
         bot_key=os.environ['BOT_API_KEY'],
+        web_app=os.environ.get('BOT_WEB_APP'),
         factory=Factory(service_factory=lambda _: None),
         dispatch=Dispatch(feature),
     ).serve())
