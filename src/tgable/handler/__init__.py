@@ -15,7 +15,7 @@ type Handler[PayloadT: Payload, ServiceT] = \
         Callable[[Context[PayloadT, ServiceT]], Awaitable[None]]
 
 type Filters[PayloadT: Payload, ServiceT] = \
-        Iterable[Callable[[Context[PayloadT, ServiceT]], bool]]
+        Iterable[Callable[[Context[PayloadT, ServiceT]], bool | Awaitable[bool]]]
 
 
 # BUG: mypy#18842
@@ -71,7 +71,10 @@ class Handlers[KeyT, PayloadT: Payload, ServiceT](ABC):
             return
 
         for _filter in *self._filters, *handler.filters:
-            if not _filter(context):
+            passing = _filter(context)
+            if isinstance(passing, Awaitable):
+                passing = await passing
+            if not passing:
                 return
 
         await handler(context)

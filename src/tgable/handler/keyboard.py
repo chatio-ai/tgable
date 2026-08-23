@@ -1,4 +1,5 @@
 
+from collections.abc import Awaitable
 from collections.abc import Callable
 
 from dataclasses import dataclass
@@ -21,7 +22,7 @@ from . import Handlers
 class KeyboardHandler[ServiceT](Protocol):
     def __call__(
             self, context: Context[KeyboardPayload, ServiceT], /,
-            *args: Any, **kwargs: Any) -> InlineKeyboardMarkup:
+            *args: Any, **kwargs: Any) -> InlineKeyboardMarkup | Awaitable[InlineKeyboardMarkup]:
         ...
 
 
@@ -30,8 +31,10 @@ class KeyboardWrapper[ServiceT](Wrapper[KeyboardPayload, ServiceT]):
     handler: KeyboardHandler[ServiceT]
 
     async def __call__(self, context: Context[KeyboardPayload, ServiceT]) -> None:
-        await context.channel.message_markup(
-                buttons=self.handler(context, *context.request.payload.options))
+        buttons = self.handler(context, *context.request.payload.options)
+        if isinstance(buttons, Awaitable):
+            buttons = await buttons
+        await context.channel.message_markup(buttons=buttons)
 
 
 class KeyboardHandlers[ServiceT](Handlers[str, KeyboardPayload, ServiceT]):
